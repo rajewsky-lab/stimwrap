@@ -16,7 +16,7 @@ def get_dataset(dataset_collection, dataset_name):
 
 def get_dataset_expression(dataset_collection, dataset_name):
     dataset = dataset_collection.get(dataset_name)
-    return np.array(dataset['expression'])
+    return np.round(np.array(dataset['expression']), 4)
 
 def get_dataset_locations(dataset_collection, dataset_name):
     dataset = dataset_collection.get(dataset_name)
@@ -27,6 +27,11 @@ def get_gene_expression(dataset_collection, dataset_name, gene):
     gene_idx = int(np.where(np.array(dataset.attrs['geneList']) == gene)[0])
     gene_expression = dataset['expression'][:, gene_idx]
     return gene_expression
+
+def get_dataset_genes(dataset_collection, dataset_name):
+    dataset = dataset_collection.get(dataset_name)
+    gene_list = np.array(dataset.attrs['geneList'])
+    return gene_list
 
 def get_transform_matrix(dataset_collection, dataset_name,
                          transformation='model_icp'):
