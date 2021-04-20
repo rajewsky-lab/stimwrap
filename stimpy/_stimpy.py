@@ -22,6 +22,10 @@ def get_dataset_locations(dataset_collection, dataset_name):
     dataset = dataset_collection.get(dataset_name)
     return np.array(dataset['locations'])
 
+def get_dataset_celltypes(dataset_collection, dataset_name):
+    dataset = dataset_collection.get(dataset_name)
+    return np.array(dataset['meta-celltype'])
+
 def get_gene_expression(dataset_collection, dataset_name, gene):
     dataset = dataset_collection.get(dataset_name)
     gene_idx = int(np.where(np.array(dataset.attrs['geneList']) == gene)[0])
@@ -32,6 +36,16 @@ def get_dataset_genes(dataset_collection, dataset_name):
     dataset = dataset_collection.get(dataset_name)
     gene_list = np.array(dataset.attrs['geneList'])
     return gene_list
+
+def get_dataset_barcodes(dataset_collection, dataset_name):
+    dataset = dataset_collection.get(dataset_name)
+    barcodes = np.array(dataset.attrs['barcodeList'])
+    return barcodes
+
+def get_dataset_metadataList(dataset_collection, dataset_name):
+    dataset = dataset_collection.get(dataset_name)
+    metadataList = np.array(dataset.attrs['metadataList'])
+    return metadataList
 
 def get_transform_matrix(dataset_collection, dataset_name,
                          transformation='model_icp'):
