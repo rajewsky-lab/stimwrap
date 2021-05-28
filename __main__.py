@@ -3,44 +3,31 @@ import stimpy
 if __name__ == '__main__':
     filename = 'slide-seq-normalized.n5'
     
-    pucks = get_dataset_collection(filename)
+    pucks = stimpy.get_container(filename)
 
     # focus on a puck
     print('\n')
-    puck_name = get_dataset_names(pucks)[4]
+    puck_name = stimpy.get_dataset_names(pucks)[4]
     print('Focusing on puck,', puck_name)
-    puck = get_dataset(pucks, puck_name)
+    puck = stimpy.get_dataset(pucks, puck_name)
 
-    # get locations of the dataset
+    # get locations directly from the dataset
     locations = np.array(puck['locations'])
     print(locations.shape)
+    
+    # alternatively fetch it from the container
+    locations = stimpy.get_item_from_dataset(pucks, puck_name, item='locations')
     
     # get expression vector for a gene
     gene = 'Hpca'
     print('\n')
     print('This is the gene expression vector for', gene)
-    print(get_gene_expression(pucks, puck_name, gene))
+    print(stimpy.get_gene_expression_from_dataset(pucks, puck_name, gene=gene))
     
-    # plot gene expression
-    plot_gene(pucks, puck_name, gene)
+    # get the whole gene expression matrix of a dataset
+    dge = stimpy.get_gene_expression_from_dataset(pucks, puck_name, gene='all')
+    
+    # get aligned locations of a puck
+    aligned_locations = stimpy.get_aligned_locations(pucks, puck_name, 
+                                                     transformation='model_sift')
 
-    plt.figure(figsize=(8, 16))
-    count = 1
-
-    # plot all aligned images
-    for puck_name in get_dataset_names(pucks):
-        puck = get_dataset(pucks, puck_name)
-        locations = np.array(puck['locations'])
-        expr = get_gene_expression(pucks, puck_name, gene)
-        aligned_locations = get_aligned_locations(pucks, puck_name)
-
-        plt.subplot(7,4,count)
-        plt.scatter(locations[0, :], locations[1, :], c=expr, s=0.15)
-        count += 1
-        
-        plt.subplot(7,4,count)
-        plt.scatter(aligned_locations[0, :],
-                    aligned_locations[1, :], c=expr, s=0.15)
-        count += 1
-
-    plt.show()

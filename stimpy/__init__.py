@@ -1,16 +1,12 @@
 __author__ = 'Nikos Karaiskos'
 __email__ = 'nikolaos.karaiskos@mdc-berlin.de'
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
-from ._stimpy import get_dataset_collection, \
+from ._stimpy import get_container, \
     get_dataset_names, \
     get_dataset, \
-    get_dataset_expression, \
-    get_dataset_genes, \
-    get_dataset_barcodes, \
-    get_dataset_metadataList, \
-    get_dataset_locations, \
-    get_gene_expression, \
-    get_dataset_celltypes, \
+    get_attribute_from_dataset, \
+    get_item_from_dataset, \
+    get_gene_expression_from_dataset, \
     get_transform_matrix, \
     get_aligned_locations
