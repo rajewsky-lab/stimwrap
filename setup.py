@@ -4,7 +4,7 @@ with open("README.rst", "r") as fh:
     long_description = fh.read()
 
 try:
-    from seerpy import __author__, __email__, __version__
+    from stimpy-wrapper import __author__, __email__, __version__
 except ImportError:  # Deps not yet installed
     __author__ = __email__ = __version__ = ''
 
