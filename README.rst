@@ -3,15 +3,15 @@
 .. |PyPI| image:: https://img.shields.io/pypi/v/stim-wrapper.svg
    :target: https://pypi.org/project/stim-wrapper/
 
-stimpy - a python interface for STIM
+stim-wrapper - a python interface for STIM
 ====================================
 
-``stimpy`` is a Python wrapper for the spatial transcriptomics library 
+``stim-wrapper`` is a Python wrapper for the spatial transcriptomics library 
 `STIM <https://github.com/PreibischLab/imglib2-st>`_. It provides an interface 
 for extracting datasets and their attributes from ``n5`` containers that are 
 created by STIM.
 
-``stimpy`` is created and maintained by `Nikos Karaiskos <mailto:nikolaos.karaiskos@mdc-berlin.de>`_.
+``stim-wrapper`` is created and maintained by `Nikos Karaiskos <mailto:nikolaos.karaiskos@mdc-berlin.de>`_.
 
 Installation
 ------------
@@ -30,7 +30,7 @@ Check if the library is successfully installed::
 Usage
 -----
 The following assumes that the file ``container.n5`` contains the datasets and their
-attributes as created by ``STIM``.::
+attributes as created by ``STIM``::
 
     pucks = sw.get_container('/path/to/container.n5')
 
@@ -64,7 +64,7 @@ or the whole gene expression matrix::
 Fetch dataset attributes
 ~~~~~~~~~~~~~~~~~~~~~~~~
 ``STIM`` stores the dataset attributes in the ``n5`` container. These can 
-be directly accessed with ``stimpy``::
+be directly accessed with ``stim-wrapper``::
 
     sw.get_attribute_from_dataset(container, puck_name, attribute='geneList')
 
