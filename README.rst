@@ -1,31 +1,31 @@
 |PyPI|
 
-.. |PyPI| image:: https://img.shields.io/pypi/v/stim-wrapper.svg
-   :target: https://pypi.org/project/stim-wrapper/
+.. |PyPI| image:: https://img.shields.io/pypi/v/stimwrap.svg
+   :target: https://pypi.org/project/stimwrap/
 
-stim-wrapper - a python interface for STIM
+stimwrap - a python interface for STIM
 ====================================
 
-``stim-wrapper`` is a Python wrapper for the spatial transcriptomics library 
+``stimwrap`` is a Python wrapper for the spatial transcriptomics library 
 `STIM <https://github.com/PreibischLab/imglib2-st>`_. It provides an interface 
 for extracting datasets and their attributes from ``n5`` containers that are 
 created by STIM.
 
-``stim-wrapper`` is created and maintained by `Nikos Karaiskos <mailto:nikolaos.karaiskos@mdc-berlin.de>`_.
+``stimwrap`` is created and maintained by `Nikos Karaiskos <mailto:nikolaos.karaiskos@mdc-berlin.de>`_.
 
 Installation
 ------------
-To install the ``stim-wrapper`` try::
+To install the ``stimwrap`` try::
 
-    pip install stim-wrapper
+    pip install stimwrap
 
 or if you do not have sudo rights::
 
-    pip install --user stim-wrapper
+    pip install --user stimwrap
 
 Check if the library is successfully installed::
 
-    import stim-wrapper as sw
+    import stimwrap as sw
 
 Usage
 -----
@@ -64,7 +64,7 @@ or the whole gene expression matrix::
 Fetch dataset attributes
 ~~~~~~~~~~~~~~~~~~~~~~~~
 ``STIM`` stores the dataset attributes in the ``n5`` container. These can 
-be directly accessed with ``stim-wrapper``::
+be directly accessed with ``stimwrap``::
 
     sw.get_attribute_from_dataset(container, puck_name, attribute='geneList')
 
