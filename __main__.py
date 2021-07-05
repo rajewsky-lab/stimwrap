@@ -1,3 +1,4 @@
+import numpy as np
 import stimpy
 
 if __name__ == '__main__':

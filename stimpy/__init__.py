@@ -1,6 +1,6 @@
 __author__ = 'Nikos Karaiskos'
 __email__ = 'nikolaos.karaiskos@mdc-berlin.de'
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 from ._stimpy import get_container, \
     get_dataset_names, \
