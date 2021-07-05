@@ -66,7 +66,7 @@ Fetch dataset attributes
 ``STIM`` stores the dataset attributes in the ``n5`` container. These can 
 be directly accessed with ``stimwrap``::
 
-    sw.get_attribute_from_dataset(container, puck_name, attribute='geneList')
+    sw.get_attribute_from_dataset(pucks, puck_name, attribute='geneList')
 
 Available options also include: `barcodeList` and `metadataList`.
 
