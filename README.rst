@@ -7,7 +7,7 @@ stimwrap - a python interface for STIM
 ======================================
 
 ``stimwrap`` is a Python wrapper for the spatial transcriptomics library 
-`STIM <https://github.com/PreibischLab/imglib2-st>`_. It provides an interface 
+`STIM <https://github.com/PreibischLab/STIM/>`_. It provides an interface 
 for extracting datasets and their attributes from ``n5`` containers that are 
 created by STIM.
 
