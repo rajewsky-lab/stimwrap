@@ -27,6 +27,9 @@ Check if the library is successfully installed::
 
     import stimwrap as sw
 
+If installation fails due to conflicting dependencies, create a dedicated environment
+with ``python=3.7`` and try again to install ``stimwrap`` as above.
+
 Usage
 -----
 The following assumes that the file ``container.n5`` contains the datasets and their
@@ -49,7 +52,7 @@ Get the puck locations either directly from the puck::
 
 or fetch them from the container::
 
-    locations = sw.get_item_from_datset(pucks, puck_name, item='locations')
+    locations = sw.get_item_from_dataset(pucks, puck_name, item='locations')
 
 Fetch gene expression
 ~~~~~~~~~~~~~~~~~~~~~
