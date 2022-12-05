@@ -16,7 +16,7 @@ setup(
     version=__version__,
     author=__author__,
     author_email=__email__,
-    description="seerpy: the ultimate success prediction tool.",
+    description="stimwrap: a Python interface for STIM.",
     long_description=long_description,
     url="https://github.com/nukappa/stimwrap",
     license='MIT',
