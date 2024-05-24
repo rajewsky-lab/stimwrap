@@ -43,8 +43,8 @@ Print the names of the datasets::
 
 Focus on a specific puck and extract the relevant information::
 
-    puck_name = sw.get_datset_names(pucks)[0]
-    puck = sw.get_datset(pucks, puck_name)
+    puck_name = sw.get_dataset_names(pucks)[0]
+    puck = sw.get_dataset(pucks, puck_name)
 
 Get the puck locations either directly from the puck::
 
