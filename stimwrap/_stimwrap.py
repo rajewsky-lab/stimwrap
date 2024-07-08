@@ -1,6 +1,18 @@
 import numpy as np
-import pyn5
+# import pyn5
 
+def cleanup_container(filename):
+    """
+    Removes the housekeeping group `__DATA_TYPES__` created
+    by JHDF5, which is kept if STIM is closed prematurely.
+
+    Args:
+        filename (string): the path to the container.
+    """
+
+    container = pyn5.File(filename, mode=pyn5.Mode.READ_ONLY)
+    # TODO: check if the dataset is anndata from the properties
+    # TODO: remove the properties using h5py
 
 def get_container(filename):
     """Read the container as object.
@@ -138,3 +150,19 @@ def get_aligned_locations(container, dataset_name, transformation='model_icp'):
                                             transformation=transformation)
     aligned_locations = np.dot(transform_matrix, locations)
     return aligned_locations[:2, :]
+
+
+def apply_coordinates(container, name = "spatial_aligned", z_coord = None):
+    """Creates a new layer in the object containing the aligned spatial coordinates
+    In case of AnnData backend, these are stored as <object>.obsm[name].
+
+    This will apply the transformation to all datasets in the container. When the
+    argument `z_coord` is provided, it is used to populate the Z coordinate of the new
+    spatial locations vector.
+
+    Args:
+        container (pyn5): the container where the dataset is inside.
+        name (str): the name of the spatial layer to be created
+        z_coord (list): the coordinate numbers (in the correct units)
+    """
+    pass
