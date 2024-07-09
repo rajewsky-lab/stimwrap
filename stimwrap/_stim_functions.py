@@ -458,6 +458,7 @@ def align_pairs(container: str,
                 genes: list = None,
                 num_genes: int = 10,
                 skip: int = 10,
+                entropy_path: str = None,
                 range: int = 2,
                 max_epsilon: float = 2**32,
                 min_num_inliers: int = 30,
@@ -485,6 +486,7 @@ def align_pairs(container: str,
         datasets (list, optional): List of datasets to align.
         genes (list, optional): List of genes to use for alignment.
         num_genes (int, optional): Number of genes to use if genes list is not provided. Default is 10.
+        entropy_path (str, optional): If precomputed, where the gene variability metric is found.
         skip (int, optional): Number of genes to skip. Default is 10.
         range (int, optional): Range parameter. Default is 2.
         max_epsilon (float, optional): Maximum epsilon value. Default is 2^32.
@@ -560,6 +562,8 @@ def align_pairs(container: str,
         args.append(f"--numThreads {num_threads}")
     elif num_threads == 0:
         args.append(f"--numThreads {os.cpu_count()}")
+    if entropy_path is not None:
+        args.append(f"--entropyPath {entropy_path}")
     if overwrite:
         args.append("--overwrite")
     
