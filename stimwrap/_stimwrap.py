@@ -117,6 +117,39 @@ class Dataset:
             _newgrpvalue[...] = value
         else:
             raise ValueError(f"'{item}' and values cannot be created/written in Dataset")
+        
+    def __getitem__(self, key: str) -> np.ndarray:
+        """
+        Get an item from the dataset using square bracket notation.
+
+        Args:
+            key (str): The name of the item to retrieve.
+
+        Returns:
+            np.ndarray: The item value as a numpy array.
+
+        Raises:
+            KeyError: If the item is not found in the dataset.
+        """
+        try:
+            return self.get(key)
+        except KeyError:
+            raise KeyError(f"'{key}' not found in the dataset")
+
+    def __setitem__(self, key: str, value: np.ndarray):
+        """
+        Set an item in the dataset using square bracket notation.
+
+        Args:
+            key (str): The name of the item to set.
+            value (np.ndarray): The value to set.
+
+        Raises:
+            TypeError: If the value is not a numpy array.
+            KeyError: If the item already exists in the dataset.
+            ValueError: If the item cannot be created or written in the Dataset.
+        """
+        self.set(key, value)
     
     def remove(self, item: str):
         """
@@ -144,7 +177,7 @@ class Dataset:
         Raises:
             KeyError: If the item is not found in attributes or items.
         """
-        
+
         if item in self.file.attrs:
             return self.get_attribute(item)
         elif item in self.file:
