@@ -13,7 +13,7 @@ and their attributes from ``n5`` containers (backed by ``n5`` or ``AnnData``)
 that are created by STIM.
 
 ``stimwrap`` is created and maintained by `Nikos Karaiskos <mailto:nikolaos.karaiskos@mdc-berlin.de>`_
-and `Daniel Leon-Perinan <mailto:daniel.leonperinan@mdc-berlin.de>`_.
+and `Daniel León-Periñán <mailto:daniel.leonperinan@mdc-berlin.de>`_.
 
 Installation
 ------------
@@ -55,6 +55,14 @@ Get the puck locations either directly from the puck::
 or fetch them from the container::
 
     locations = pucks.get_dataset(puck_name)['locations']
+
+The examples above assume that the dataset is `N5`-backed. For `AnnData`-backed
+datasets, the key for the puck locations might be::
+
+    locations = pucks.get_dataset(puck_name)['spatial']
+
+which will try to access the `obsm/spatial` variable from the dataset. Alternatively,
+we recommend using the official `AnnData` package for handling these files.
 
 Fetch gene expression
 ~~~~~~~~~~~~~~~~~~~~~
