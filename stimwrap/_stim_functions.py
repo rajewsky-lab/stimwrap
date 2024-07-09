@@ -547,6 +547,7 @@ def align_pairs(container: str,
         args.append(f"--datasets {','.join(datasets)}")
     if genes:
         args.append(f"--genes {','.join(genes)}")
+        args.append(f"--numGenes 0")
     else:
         args.append(f"--numGenes {num_genes}")
     if ff_gauss is not None:
