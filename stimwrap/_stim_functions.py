@@ -2,6 +2,7 @@ import os
 import subprocess
 import inspect
 from functools import wraps
+import logging
 
 VALID_RENDERING_MODES = ["Gauss"]
 VALID_STIM_VERSION = ["0.3.0"]
@@ -123,7 +124,7 @@ def set_bin_path(default_path=None):
         if os.path.exists(bins_path):
             BIN_PATH = bins_path
             return bins_path
-    raise FileNotFoundError("Binaries folder not found. Please specify a valid path.")
+    logging.warn("Binaries folder not found. Please specify a valid path by running stimwrap.set_bin_path(...)")
 
 # general decorator to run command
 def stim_function(program_name):
