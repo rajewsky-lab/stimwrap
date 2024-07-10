@@ -28,6 +28,7 @@ Installation
 To install the ``stimwrap`` try:
 
 .. code-block:: bash
+
    pip install stimwrap
 
 or if you do not have sudo rights:
