@@ -12,8 +12,7 @@ BIN_PATH = ""
 
 # utils
 def validate_file_exists(path: str) -> bool:
-    """
-    Validates that a file or directory exists at the given path.
+    """Validates that a file or directory exists at the given path.
 
     Args:
         path (str): The path to the file or directory to check.
@@ -30,8 +29,7 @@ def validate_file_exists(path: str) -> bool:
 
 
 def validate_positive(value: float) -> bool:
-    """
-    Validates that a given value is a non-negative number.
+    """Validates that a given value is a non-negative number.
 
     This function checks if the input is a float or int and is greater than or equal to zero.
     It attempts to identify the variable name in the calling context for more informative error messages.
@@ -57,8 +55,7 @@ def validate_positive(value: float) -> bool:
 
 
 def stim_version():
-    """
-    Retrieves the version of the STIM software.
+    """Retrieves the version of the STIM software.
 
     This function calls the 'st-help' command with the '--version' flag to get the STIM version.
 
@@ -79,8 +76,8 @@ def stim_version():
 
 # communicating with the Java bins
 def check_version():
-    """
-    Checks compatibility between the current stimwrap version and the installed STIM version.
+    """Checks compatibility between the current stimwrap version and the
+    installed STIM version.
 
     This function compares the installed STIM version with the list of valid STIM versions
     that are compatible with the current stimwrap version.
@@ -108,8 +105,7 @@ def check_version():
 
 
 def set_bin_path(default_path=None):
-    """
-    Sets the global BIN_PATH variable to the location of STIM binaries.
+    """Sets the global BIN_PATH variable to the location of STIM binaries.
 
     This function attempts to set the BIN_PATH in the following order:
     1. Uses the provided default_path if it exists.
@@ -182,8 +178,7 @@ def add_slices(
     annotations: str = None,
     move: bool = False,
 ):
-    """
-    Adds multiple slices to a container.
+    """Adds multiple slices to a container.
 
     This function iterates over the input files and calls add_slice for each one.
 
@@ -219,8 +214,7 @@ def add_slice(
     annotations: str = None,
     move: bool = False,
 ):
-    """
-    Adds a single slice to a container.
+    """Adds a single slice to a container.
 
     This function prepares the arguments for the st-add-slice command and executes it.
 
@@ -259,8 +253,7 @@ def add_slice(
 def resave(
     container: str, input: str, annotation: str = None, normalize: bool = False
 ):
-    """
-    Resaves data in a container.
+    """Resaves data in a container.
 
     This function prepares the arguments for the st-resave command and executes it.
 
@@ -290,8 +283,7 @@ def resave(
 
 @stim_function("st-normalize")
 def normalize(container: str, input: str, output: str = None):
-    """
-    Normalizes data in a container.
+    """Normalizes data in a container.
 
     This function prepares the arguments for the st-normalize command and executes it.
 
@@ -320,8 +312,7 @@ def normalize(container: str, input: str, output: str = None):
 
 @stim_function("st-add-annotations")
 def add_annotations(input: str, annotation: str, label: str):
-    """
-    Adds annotations to a container.
+    """Adds annotations to a container.
 
     This function prepares the arguments for the st-add-annotations command and executes it.
 
@@ -363,8 +354,7 @@ def align_pairs_add(
     hide_pairwise_rendering: bool = False,
     overwrite: bool = False,
 ):
-    """
-    Aligns pairs of datasets and adds the alignment to the container.
+    """Aligns pairs of datasets and adds the alignment to the container.
 
     This function prepares the arguments for the st-align-pairs-add command and executes it.
 
@@ -423,8 +413,7 @@ def align_interactive(
     ff_median: float = None,
     ff_single_spot: float = None,
 ):
-    """
-    Performs interactive alignment of two sections.
+    """Performs interactive alignment of two sections.
 
     This function prepares the arguments for the st-align-interactive command and executes it.
 
@@ -509,7 +498,7 @@ def align_pairs(
     skip: int = 10,
     entropy_path: str = None,
     range: int = 2,
-    max_epsilon: float = 2**32,
+    max_epsilon: float = 0,
     min_num_inliers: int = 30,
     min_num_inliers_gene: int = 5,
     rendering: str = "Gauss",
@@ -525,8 +514,7 @@ def align_pairs(
     overwrite: bool = False,
     num_threads: int = 0,
 ):
-    """
-    Aligns pairs of datasets.
+    """Aligns pairs of datasets.
 
     This function prepares the arguments for the st-align-pairs command and executes it.
 
@@ -538,7 +526,7 @@ def align_pairs(
         entropy_path (str, optional): If precomputed, where the gene variability metric is found.
         skip (int, optional): Number of genes to skip. Default is 10.
         range (int, optional): Range parameter. Default is 2.
-        max_epsilon (float, optional): Maximum epsilon value. Default is 2^32.
+        max_epsilon (float, optional): Maximum epsilon value. Default is 0 (will be automatically computed by STIM).
         min_num_inliers (int, optional): Minimum number of inliers. Default is 30.
         min_num_inliers_gene (int, optional): Minimum number of inliers per gene. Default is 5.
         rendering (str, optional): Rendering mode. Default is "Gauss".
@@ -641,8 +629,7 @@ def align_global(
     skip_icp: bool = False,
     ignore_quality: bool = False,
 ):
-    """
-    Performs global alignment of datasets.
+    """Performs global alignment of datasets.
 
     This function prepares the arguments for the st-align-global command and executes it.
 
@@ -711,8 +698,7 @@ def align_global(
 # interactive exploration/visualization
 @stim_function("st-explorer")
 def explorer(input: str, datasets: list = None):
-    """
-    Launches the STIM explorer for interactive data exploration.
+    """Launches the STIM explorer for interactive data exploration.
 
     This function prepares the arguments for the st-explorer command and executes it.
 
@@ -749,8 +735,7 @@ def render(
     ff_single_spot: float = None,
     ignore_transforms: bool = False,
 ):
-    """
-    Renders datasets and genes.
+    """Renders datasets and genes.
 
     This function prepares the arguments for the st-render command and executes it.
 
@@ -836,8 +821,7 @@ def align_pairs_view(
     scale: float = 0.05,
     rendering_factor: float = 4.0,
 ):
-    """
-    Views the alignment of pairs of datasets.
+    """Views the alignment of pairs of datasets.
 
     This function prepares the arguments for the st-align-pairs-view command and executes it.
 
@@ -890,8 +874,7 @@ def bdv_view3d(
     ff_single_spot: float = None,
     annotation_radius: float = 0.75,
 ):
-    """
-    Launches a 3D viewer for the datasets.
+    """Launches a 3D viewer for the datasets.
 
     This function prepares the arguments for the st-bdv-view3d command and executes it.
 
@@ -982,8 +965,7 @@ def bdv_view(
     ff_single_spot: float = None,
     annotation_radius: float = 0.75,
 ):
-    """
-    Launches a 2D viewer for a single dataset.
+    """Launches a 2D viewer for a single dataset.
 
     This function prepares the arguments for the st-bdv-view command and executes it.
 

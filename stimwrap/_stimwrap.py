@@ -7,15 +7,13 @@ import zarr
 
 
 class Dataset:
-    """
-    Handle dataset operations for both AnnData (.h5ad) and N5 (.n5) file formats.
-    """
+    """Handle dataset operations for both AnnData (.h5ad) and N5 (.n5) file
+    formats."""
 
     def __init__(
         self, container: zarr.N5Store, dataset_name: str, mode: str = "r"
     ):
-        """
-        Initialize a Dataset object.
+        """Initialize a Dataset object.
 
         Args:
             container (zarr.N5Store): The container storing the dataset.
@@ -68,10 +66,8 @@ class Dataset:
         self.close()
 
     def cleanup_dataset(self):
-        """
-        Removes the housekeeping group `__DATA_TYPES__` created
-        by JHDF5, which is kept if STIM is closed prematurely.
-        """
+        """Removes the housekeeping group `__DATA_TYPES__` created by JHDF5,
+        which is kept if STIM is closed prematurely."""
         if self.is_h5ad and self.file:
             try:
                 self.remove("__DATA_TYPES__")
@@ -97,8 +93,7 @@ class Dataset:
         return np.array(self.file.attrs[attribute])
 
     def get(self, item: str) -> np.ndarray:
-        """
-        Get an item from the dataset.
+        """Get an item from the dataset.
 
         Args:
             item (str): The name of the item to retrieve.
@@ -110,8 +105,7 @@ class Dataset:
         return np.array(self.file[item])
 
     def set(self, item: str, value: np.ndarray):
-        """
-        Set (write) an item in the dataset.
+        """Set (write) an item in the dataset.
 
         Args:
             item (str): The name of the item to set.
@@ -140,8 +134,7 @@ class Dataset:
             )
 
     def __getitem__(self, key: str) -> np.ndarray:
-        """
-        Get an item from the dataset using square bracket notation.
+        """Get an item from the dataset using square bracket notation.
 
         Args:
             key (str): The name of the item to retrieve.
@@ -158,8 +151,7 @@ class Dataset:
             raise KeyError(f"'{key}' not found in the dataset")
 
     def __setitem__(self, key: str, value: np.ndarray):
-        """
-        Set an item in the dataset using square bracket notation.
+        """Set an item in the dataset using square bracket notation.
 
         Args:
             key (str): The name of the item to set.
@@ -173,8 +165,7 @@ class Dataset:
         self.set(key, value)
 
     def remove(self, item: str):
-        """
-        Remove an item from the dataset.
+        """Remove an item from the dataset.
 
         Args:
             item (str): The name of the item to remove.
@@ -186,8 +177,7 @@ class Dataset:
             logging.error(f"Cannot remove '{item}'")
 
     def get_attribute_or_item(self, item: str) -> np.ndarray:
-        """
-        Get an attribute or item from the dataset.
+        """Get an attribute or item from the dataset.
 
         Args:
             item (str): The name of the attribute or item to retrieve.
@@ -307,8 +297,8 @@ class Dataset:
     def get_aligned_locations(
         self, transformation: str = "model_sift", locations: str = "locations"
     ):
-        """Get the aligned locations of a dataset after having aligned it to the
-        rest datasets in the container.
+        """Get the aligned locations of a dataset after having aligned it to
+        the rest datasets in the container.
 
         Args:.
             transformation (str, optional): the transformation used. Can be
@@ -342,8 +332,9 @@ class Dataset:
         return aligned_locations
 
     def get_gene_expression(self, gene: str = None):
-        """Get gene expression from a specific dataset. It returns either a vector
-        for a specific gene or the whole gene expression matrix if no gene is provided.
+        """Get gene expression from a specific dataset. It returns either a
+        vector for a specific gene or the whole gene expression matrix if no
+        gene is provided.
 
         Args:
             gene (str, optional): the gene to get the expression for. If  gene is None
@@ -419,10 +410,8 @@ class Container:
         return self.__str__()
 
     def cleanup_container(self):
-        """
-        Removes the housekeeping group `__DATA_TYPES__` created
-        by JHDF5, which is kept if STIM is closed prematurely.
-        """
+        """Removes the housekeeping group `__DATA_TYPES__` created by JHDF5,
+        which is kept if STIM is closed prematurely."""
         for dataset_name in self.container.attrs["datasets"]:
             with self.get_dataset(dataset_name, mode="r+") as dataset:
                 dataset.cleanup_dataset()
