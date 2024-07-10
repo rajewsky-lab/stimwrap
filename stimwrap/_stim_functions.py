@@ -137,7 +137,15 @@ def stim_function(program_name):
             command = [os.path.join(BIN_PATH, program_name)] + args
             final_command = ' '.join(command)
             env = os.environ.copy()
-            subprocess.run(final_command, shell=True, check=True, env=env)
+            subprocess.Popen(final_command, 
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.STDOUT,
+                             shell=True, 
+                             check=True, 
+                             text=True,
+                             bufsize=1,
+                             universal_newlines=True,
+                             env=env)
         return wrapper
     return decorator
 
