@@ -84,9 +84,9 @@ class Dataset:
                     f"Dataset {self.dataset_name} is clean (does not contain '__DATA_TYPES__'). Skipping..."
                 )
             try:
-                if isinstance(self.file["obs"].attrs["column-order"], str):
+                if not isinstance(self.file["obs"].attrs["column-order"], list):
                     self.file["obs"].attrs["column-order"] = ""
-                if isinstance(self.file["var"].attrs["column-order"], str):
+                if not isinstance(self.file["var"].attrs["column-order"], list):
                     self.file["var"].attrs["column-order"] = ""
             except KeyError as e:
                 logging.warn(
