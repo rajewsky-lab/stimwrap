@@ -5,9 +5,9 @@ import subprocess
 import sys
 from functools import wraps
 
-VALID_RENDERING_MODES = ["Gauss"]
-VALID_STIM_VERSION = ["0.3.0"]
-BIN_PATH = ""
+VALID_RENDERING_MODES: list = ["Gauss"]
+VALID_STIM_VERSION: list = ["0.3.0"]
+BIN_PATH: str = ""
 
 
 # utils
@@ -57,7 +57,7 @@ def validate_positive(value: float) -> bool:
 def stim_version():
     """Retrieves the version of the STIM software.
 
-    This function calls the 'st-help' command with the '--version' flag to get the STIM version.
+    This function calls the ``st-help`` command with the ``--version`` flag to get the STIM version.
 
     Returns:
         str: The version number of STIM as a string.
@@ -107,7 +107,7 @@ def check_version():
 def set_bin_path(default_path=None):
     """Sets the global BIN_PATH variable to the location of STIM binaries.
 
-    This function attempts to set the BIN_PATH in the following order:
+    This function attempts to set the ``BIN_PATH`` in the following order:
     1. Uses the provided default_path if it exists.
     2. Checks for binaries in the current Conda environment, if one is active.
     3. Raises an error if neither option is successful.
@@ -132,12 +132,14 @@ def set_bin_path(default_path=None):
             BIN_PATH = bins_path
             return bins_path
     logging.warn(
-        "Binaries folder not found. Please specify a valid path by running stimwrap.set_bin_path(...)"
+        "Binaries folder not found. Please specify a valid path by running ``stimwrap.set_bin_path(...)``"
     )
 
 
 # general decorator to run command
 def stim_function(program_name):
+    """Decorator for running a program under ``BIN_PATH``
+    """
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -180,7 +182,7 @@ def add_slices(
 ):
     """Adds multiple slices to a container.
 
-    This function iterates over the input files and calls add_slice for each one.
+    This function iterates over the input files and calls `stimwrap.add_slice` for each one.
 
     Args:
         container (str): Path to the container file.
@@ -216,7 +218,7 @@ def add_slice(
 ):
     """Adds a single slice to a container.
 
-    This function prepares the arguments for the st-add-slice command and executes it.
+    This function prepares the arguments for the ``st-add-slice`` command and executes it.
 
     Args:
         container (str): Path to the container file.
@@ -227,7 +229,7 @@ def add_slice(
         move (bool, optional): If True, move the input file instead of copying. Default is False.
 
     Returns:
-    list: A list of command-line arguments for the st-add-slice command.
+    list: A list of command-line arguments for the ``st-add-slice`` command.
     """
 
     validate_file_exists(input)
@@ -255,7 +257,7 @@ def resave(
 ):
     """Resaves data in a container.
 
-    This function prepares the arguments for the st-resave command and executes it.
+    This function prepares the arguments for the ``st-resave`` command and executes it.
 
     Args:
         container (str): Path to the container file.
@@ -264,7 +266,7 @@ def resave(
         normalize (bool, optional): If True, normalize the data. Default is False.
 
     Returns:
-        list: A list of command-line arguments for the st-resave command.
+        list: A list of command-line arguments for the ``st-resave`` command.
     """
     validate_file_exists(input)
 
@@ -285,7 +287,7 @@ def resave(
 def normalize(container: str, input: str, output: str = None):
     """Normalizes data in a container.
 
-    This function prepares the arguments for the st-normalize command and executes it.
+    This function prepares the arguments for the ``st-normalize`` command and executes it.
 
     Args:
         container (str): Path to the container file.
@@ -293,7 +295,7 @@ def normalize(container: str, input: str, output: str = None):
         output (str, optional): Path to the output file.
 
     Returns:
-        list: A list of command-line arguments for the st-normalize command.
+        list: A list of command-line arguments for the ``st-normalize`` command.
     """
 
     validate_file_exists(container)
@@ -314,7 +316,7 @@ def normalize(container: str, input: str, output: str = None):
 def add_annotations(input: str, annotation: str, label: str):
     """Adds annotations to a container.
 
-    This function prepares the arguments for the st-add-annotations command and executes it.
+    This function prepares the arguments for the ``st-add-annotations`` command and executes it.
 
     Args:
         input (str): Path to the input file.
@@ -322,7 +324,7 @@ def add_annotations(input: str, annotation: str, label: str):
         label (str): Label for the annotation.
 
     Returns:
-        list: A list of command-line arguments for the st-add-annotations command.
+        list: A list of command-line arguments for the ``st-add-annotations`` command.
     """
 
     validate_file_exists(input)
@@ -356,7 +358,7 @@ def align_pairs_add(
 ):
     """Aligns pairs of datasets and adds the alignment to the container.
 
-    This function prepares the arguments for the st-align-pairs-add command and executes it.
+    This function prepares the arguments for the ``st-align-pairs-add`` command and executes it.
 
     Args:
         container (str): Path to the container file.
@@ -370,7 +372,7 @@ def align_pairs_add(
         overwrite (bool, optional): If True, overwrite existing data. Default is False.
 
     Returns:
-        list: A list of command-line arguments for the st-align-pairs-add command.
+        list: A list of command-line arguments for the ``st-align-pairs-add`` command.
     """
     validate_file_exists(container)
     validate_file_exists(matches)
@@ -415,7 +417,7 @@ def align_interactive(
 ):
     """Performs interactive alignment of two sections.
 
-    This function prepares the arguments for the st-align-interactive command and executes it.
+    This function prepares the arguments for the ``st-align-interactive`` command and executes it.
 
     Args:
         input (str): Path to the input file.
@@ -434,7 +436,7 @@ def align_interactive(
         ff_single_spot (float, optional): Single spot filter factor.
 
     Returns:
-        list: A list of command-line arguments for the st-align-interactive command.
+        list: A list of command-line arguments for the ``st-align-interactive`` command.
 
     Raises:
         KeyError: If an invalid rendering mode is provided.
@@ -516,7 +518,7 @@ def align_pairs(
 ):
     """Aligns pairs of datasets.
 
-    This function prepares the arguments for the st-align-pairs command and executes it.
+    This function prepares the arguments for the ``st-align-pairs`` command and executes it.
 
     Args:
         container (str): Path to the container file.
@@ -543,7 +545,7 @@ def align_pairs(
         num_threads (int, optional): Number of threads to use. Default is 0 (use all available).
 
     Returns:
-        list: A list of command-line arguments for the st-align-pairs command.
+        list: A list of command-line arguments for the ``st-align-pairs`` command.
 
     Raises:
         KeyError: If an invalid rendering mode is provided.
@@ -631,7 +633,7 @@ def align_global(
 ):
     """Performs global alignment of datasets.
 
-    This function prepares the arguments for the st-align-global command and executes it.
+    This function prepares the arguments for the ``st-align-global`` command and executes it.
 
     Args:
         container (str): Path to the container file.
@@ -652,7 +654,7 @@ def align_global(
         ignore_quality (bool, optional): If True, ignore quality checks. Default is False.
 
     Returns:
-        list: A list of command-line arguments for the st-align-global command.
+        list: A list of command-line arguments for the ``st-align-global`` command.
     """
 
     validate_file_exists(container)
@@ -700,14 +702,14 @@ def align_global(
 def explorer(input: str, datasets: list = None):
     """Launches the STIM explorer for interactive data exploration.
 
-    This function prepares the arguments for the st-explorer command and executes it.
+    This function prepares the arguments for the ``st-explorer`` command and executes it.
 
     Args:
         input (str): Path to the input file.
         datasets (list, optional): List of datasets to explore.
 
     Returns:
-        list: A list of command-line arguments for the st-explorer command.
+        list: A list of command-line arguments for the ``st-explorer`` command.
     """
     args = [f"--input {input}"]
 
@@ -737,7 +739,7 @@ def render(
 ):
     """Renders datasets and genes.
 
-    This function prepares the arguments for the st-render command and executes it.
+    This function prepares the arguments for the ``st-render`` command and executes it.
 
     Args:
         input (str): Path to the input file.
@@ -757,7 +759,7 @@ def render(
         ignore_transforms (bool, optional): If True, ignore transforms. Default is False.
 
     Returns:
-        list: A list of command-line arguments for the st-render command.
+        list: A list of command-line arguments for the ``st-render`` command.
 
     Raises:
         KeyError: If an invalid rendering mode is provided.
@@ -823,7 +825,7 @@ def align_pairs_view(
 ):
     """Views the alignment of pairs of datasets.
 
-    This function prepares the arguments for the st-align-pairs-view command and executes it.
+    This function prepares the arguments for the ``st-align-pairs-view`` command and executes it.
 
     Args:
         container (str): Path to the container file.
@@ -834,7 +836,7 @@ def align_pairs_view(
         rendering_factor (float, optional): Rendering factor. Default is 4.0.
 
     Returns:
-        list: A list of command-line arguments for the st-align-pairs-view command.
+        list: A list of command-line arguments for the ``st-align-pairs-view`` command.
     """
 
     validate_file_exists(container)
@@ -876,7 +878,7 @@ def bdv_view3d(
 ):
     """Launches a 3D viewer for the datasets.
 
-    This function prepares the arguments for the st-bdv-view3d command and executes it.
+    This function prepares the arguments for the ``st-bdv-view3d`` command and executes it.
 
     Args:
         input (str): Path to the input file.
@@ -895,7 +897,7 @@ def bdv_view3d(
         annotation_radius (float, optional): Annotation radius. Default is 0.75.
 
     Returns:
-        list: A list of command-line arguments for the st-bdv-view3d command.
+        list: A list of command-line arguments for the ``st-bdv-view3d`` command.
 
     Raises:
         KeyError: If an invalid rendering mode is provided.
@@ -967,7 +969,7 @@ def bdv_view(
 ):
     """Launches a 2D viewer for a single dataset.
 
-    This function prepares the arguments for the st-bdv-view command and executes it.
+    This function prepares the arguments for the ``st-bdv-view`` command and executes it.
 
     Args:
         input (str): Path to the input file.
@@ -985,7 +987,7 @@ def bdv_view(
         annotation_radius (float, optional): Annotation radius. Default is 0.75.
 
     Returns:
-        list: A list of command-line arguments for the st-bdv-view command.
+        list: A list of command-line arguments for the ``st-bdv-view`` command.
 
     Raises:
         KeyError: If an invalid rendering mode is provided.

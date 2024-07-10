@@ -24,12 +24,20 @@ class Dataset:
             ValueError: If the dataset name doesn't end with '.h5ad' or '.n5'.
         """
 
-        self.container = container
-        self.dataset_name = dataset_name
+        self.container: zarr.N5Store = container
+        "the root container"
+
+        self.dataset_name: str = dataset_name
+        "descriptive name of the dataset"
+
         self.file = None
-        self.is_h5ad = dataset_name.lower().endswith(".h5ad")
-        self.is_n5 = dataset_name.lower().endswith(".n5")
-        self.mode = mode
+        "either AnnData or n5 object"
+
+        self.is_h5ad: bool = dataset_name.lower().endswith(".h5ad")
+        self.is_n5: bool = dataset_name.lower().endswith(".n5")
+        self.mode: str = mode
+        "how the Dataset will be opened"
+
         if not (self.is_h5ad or self.is_n5):
             raise ValueError("The dataset name must end with '.h5ad' or '.n5'")
 
@@ -383,13 +391,18 @@ class Dataset:
 
 
 class Container:
+    """Parses the stores of various Datasets as a single N5 container."""
     def __init__(self, filename: str):
-        self.path = filename
-        self.container = zarr.N5Store(self.path)
+        self.path: str = filename
+        "where the ``Container`` is stored"
+
+        self.container: zarr.N5Store = zarr.N5Store(self.path)
+        "the N5 Store"
 
         _attrs = self.container._load_n5_attrs("attributes.json")
-        self.container.attrs = _attrs
-        self.attrs = self.container.attrs
+        self.container.attrs = _attrs 
+        self.attrs: dict = self.container.attrs
+        "the root attributes of the container"
 
     def __str__(self):
         datasets = self.attrs["datasets"]
