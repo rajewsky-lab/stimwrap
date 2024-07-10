@@ -71,6 +71,13 @@ class Dataset:
                 self.remove('__DATA_TYPES__')
             except KeyError as e:
                 logging.warn(f"Dataset {self.dataset_name} is clean (does not contain '__DATA_TYPES__'). Skipping...")
+            try:
+                if isinstance(self.file['obs'].attrs['column-order'], str):
+                    self.file['obs'].attrs['column-order'] = ''
+                if isinstance(self.file['var'].attrs['column-order'], str):
+                    self.file['var'].attrs['column-order'] = ''
+            except KeyError as e:
+                logging.warn(f"Dataset {self.dataset_name} is clean (cannot reset 'column-order'). Skipping...")
         else:
             logging.warn(f"Dataset {self.dataset_name} is not AnnData. Skipping...")
 
