@@ -38,7 +38,7 @@ Check if the library is successfully installed::
     import stimwrap as sw
 
 If installation fails due to conflicting dependencies, create a dedicated environment
-with ``python>=3.7`` and try again to install ``stimwrap`` as above.
+with ``python>=3.9`` and try again to install ``stimwrap`` as above.
 
 Usage
 -----
