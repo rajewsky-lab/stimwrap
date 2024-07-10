@@ -1,13 +1,14 @@
-import os
-import sys
-import subprocess
 import inspect
-from functools import wraps
 import logging
+import os
+import subprocess
+import sys
+from functools import wraps
 
 VALID_RENDERING_MODES = ["Gauss"]
 VALID_STIM_VERSION = ["0.3.0"]
 BIN_PATH = ""
+
 
 # utils
 def validate_file_exists(path: str) -> bool:
@@ -26,6 +27,7 @@ def validate_file_exists(path: str) -> bool:
     if not os.path.exists(path):
         raise FileNotFoundError(f"The file or directory {path} does not exist.")
     return True
+
 
 def validate_positive(value: float) -> bool:
     """
@@ -53,6 +55,7 @@ def validate_positive(value: float) -> bool:
         raise ValueError(f"{variable_name} must be non-negative.")
     return True
 
+
 def stim_version():
     """
     Retrieves the version of the STIM software.
@@ -66,10 +69,13 @@ def stim_version():
         subprocess.CalledProcessError: If the command fails to execute.
     """
     env = os.environ.copy()
-    command = [os.path.join(BIN_PATH, 'st-help')] + ['--version']
-    final_command = ' '.join(command)
-    version = subprocess.run(final_command, shell=True, check=True, capture_output=True, env=env)
+    command = [os.path.join(BIN_PATH, "st-help")] + ["--version"]
+    final_command = " ".join(command)
+    version = subprocess.run(
+        final_command, shell=True, check=True, capture_output=True, env=env
+    )
     return version.stdout.strip().decode()
+
 
 # communicating with the Java bins
 def check_version():
@@ -92,11 +98,14 @@ def check_version():
         pass
 
     if version not in VALID_STIM_VERSION:
-        raise NotImplementedError(f"""This version of stimwrap ({stimwrap_version}) 
+        raise NotImplementedError(
+            f"""This version of stimwrap ({stimwrap_version}) 
                                   is not compatible with STIM {version}.
                                   
                                   Please run stimwrap.set_bin_path("path_to_bins") to set
-                                  the correct path (replace "path_to_bins" by the proper path)""")
+                                  the correct path (replace "path_to_bins" by the proper path)"""
+        )
+
 
 def set_bin_path(default_path=None):
     """
@@ -117,16 +126,19 @@ def set_bin_path(default_path=None):
         FileNotFoundError: If no valid binary path is found or provided.
     """
     global BIN_PATH
-    conda_env = os.environ.get('CONDA_PREFIX')
+    conda_env = os.environ.get("CONDA_PREFIX")
     if default_path and os.path.exists(default_path):
         BIN_PATH = default_path
         return default_path
     elif conda_env:
-        bins_path = os.path.join(conda_env, 'bin')
+        bins_path = os.path.join(conda_env, "bin")
         if os.path.exists(bins_path):
             BIN_PATH = bins_path
             return bins_path
-    logging.warn("Binaries folder not found. Please specify a valid path by running stimwrap.set_bin_path(...)")
+    logging.warn(
+        "Binaries folder not found. Please specify a valid path by running stimwrap.set_bin_path(...)"
+    )
+
 
 # general decorator to run command
 def stim_function(program_name):
@@ -136,34 +148,40 @@ def stim_function(program_name):
             check_version()
             args = func(*args, **kwargs)
             command = [os.path.join(BIN_PATH, program_name)] + args
-            final_command = ' '.join(command)
+            final_command = " ".join(command)
             env = os.environ.copy()
-            process = subprocess.Popen(final_command, 
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.STDOUT,
-                             shell=True,
-                             text=True,
-                             bufsize=1,
-                             universal_newlines=True,
-                             env=env)
-            for line in iter(process.stdout.readline, ''):
-                print(line, end='')
+            process = subprocess.Popen(
+                final_command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                shell=True,
+                text=True,
+                bufsize=1,
+                universal_newlines=True,
+                env=env,
+            )
+            for line in iter(process.stdout.readline, ""):
+                print(line, end="")
                 sys.stdout.flush()
-            
+
             return_code = process.wait()
             if return_code != 0:
                 raise subprocess.CalledProcessError(return_code, command)
-    
+
         return wrapper
+
     return decorator
 
+
 # data management
-def add_slices(container: str,
-               inputs: list,
-               expression_values: str = None,
-               locations: str = None,
-               annotations: str = None,
-               move: bool = False):
+def add_slices(
+    container: str,
+    inputs: list,
+    expression_values: str = None,
+    locations: str = None,
+    annotations: str = None,
+    move: bool = False,
+):
     """
     Adds multiple slices to a container.
 
@@ -182,19 +200,25 @@ def add_slices(container: str,
     """
 
     if not isinstance(inputs, (list, tuple)) or len(inputs) == 0:
-        raise ValueError("In `inputs`, you must provide the path to at least one file, as a list")
-    
+        raise ValueError(
+            "In `inputs`, you must provide the path to at least one file, as a list"
+        )
+
     for input in inputs:
-        add_slice(container, input, expression_values, locations, annotations, move)
+        add_slice(
+            container, input, expression_values, locations, annotations, move
+        )
 
 
 @stim_function("st-add-slice")
-def add_slice(container: str,
-              input: str,
-              expression_values: str = None,
-              locations: str = None,
-              annotations: str = None,
-              move: bool = False):
+def add_slice(
+    container: str,
+    input: str,
+    expression_values: str = None,
+    locations: str = None,
+    annotations: str = None,
+    move: bool = False,
+):
     """
     Adds a single slice to a container.
 
@@ -230,11 +254,11 @@ def add_slice(container: str,
 
     return args
 
+
 @stim_function("st-resave")
-def resave(container: str,
-           input: str,
-           annotation: str = None,
-           normalize: bool = False):
+def resave(
+    container: str, input: str, annotation: str = None, normalize: bool = False
+):
     """
     Resaves data in a container.
 
@@ -251,7 +275,6 @@ def resave(container: str,
     """
     validate_file_exists(input)
 
-    
     args = [
         f"--container {container}",
         f"--input {input}",
@@ -261,13 +284,12 @@ def resave(container: str,
         args.append(f"--annotation {annotation}")
     if normalize:
         args.append("--normalize")
-    
+
     return args
 
+
 @stim_function("st-normalize")
-def normalize(container: str,
-              input: str,
-              output: str = None):
+def normalize(container: str, input: str, output: str = None):
     """
     Normalizes data in a container.
 
@@ -285,7 +307,6 @@ def normalize(container: str,
     validate_file_exists(container)
     validate_file_exists(input)
 
-    
     args = [
         f"--container {container}",
         f"--input {input}",
@@ -293,13 +314,12 @@ def normalize(container: str,
 
     if output:
         args.append(f"--output {output}")
-    
+
     return args
 
+
 @stim_function("st-add-annotations")
-def add_annotations(input: str,
-                    annotation: str,
-                    label: str):
+def add_annotations(input: str, annotation: str, label: str):
     """
     Adds annotations to a container.
 
@@ -320,25 +340,29 @@ def add_annotations(input: str,
     args = [
         f"--input {input}",
         f"--annotation {annotation}",
-        f"--label {label}"
+        f"--label {label}",
     ]
-    
+
     return args
+
 
 @stim_function("st-add-entropy")
 def add_entropy():
     pass
 
+
 @stim_function("st-align-pairs-add")
-def align_pairs_add(container: str,
-                    datasets: list,
-                    matches: str,
-                    lmbda: float = 1.0,
-                    scale: float = 0.05,
-                    smoothness_factor: float = 4.0,
-                    rendering_gene: str = None,
-                    hide_pairwise_rendering: bool = False,
-                    overwrite: bool = False):
+def align_pairs_add(
+    container: str,
+    datasets: list,
+    matches: str,
+    lmbda: float = 1.0,
+    scale: float = 0.05,
+    smoothness_factor: float = 4.0,
+    rendering_gene: str = None,
+    hide_pairwise_rendering: bool = False,
+    overwrite: bool = False,
+):
     """
     Aligns pairs of datasets and adds the alignment to the container.
 
@@ -377,26 +401,28 @@ def align_pairs_add(container: str,
         args.append("--hidePairwiseRendering")
     if overwrite:
         args.append("--overwrite")
-    
+
     return args
+
 
 # alignment
 @stim_function("st-align-interactive")
-def align_interactive(input: str,
-                      section_a: str,
-                      section_b: str,
-                      num_genes: int = 10,
-                      skip: int = 10,
-                      rendering: str = "Gauss",
-                      rendering_factor: float = 1.0,
-                      scale: float = 0.05,
-                      brightness_min: float = 0,
-                      brightness_max: float = 0.5,
-                      ff_gauss: float = None,
-                      ff_mean: float = None,
-                      ff_median: float = None,
-                      ff_single_spot: float = None,
-                      ):
+def align_interactive(
+    input: str,
+    section_a: str,
+    section_b: str,
+    num_genes: int = 10,
+    skip: int = 10,
+    rendering: str = "Gauss",
+    rendering_factor: float = 1.0,
+    scale: float = 0.05,
+    brightness_min: float = 0,
+    brightness_max: float = 0.5,
+    ff_gauss: float = None,
+    ff_mean: float = None,
+    ff_median: float = None,
+    ff_single_spot: float = None,
+):
     """
     Performs interactive alignment of two sections.
 
@@ -436,7 +462,9 @@ def align_interactive(input: str,
     validate_positive(brightness_max)
 
     if rendering not in VALID_RENDERING_MODES:
-        raise KeyError(f"The argument `rendering` must be one of {VALID_RENDERING_MODES}")
+        raise KeyError(
+            f"The argument `rendering` must be one of {VALID_RENDERING_MODES}"
+        )
 
     if ff_gauss is not None:
         validate_positive(ff_gauss)
@@ -468,33 +496,35 @@ def align_interactive(input: str,
         args.append(f"--ffMedian {ff_median}")
     if ff_single_spot is not None:
         args.append(f"--ffSingleSpot {ff_single_spot}")
-    
+
     return args
 
+
 @stim_function("st-align-pairs")
-def align_pairs(container: str,
-                datasets: list = None,
-                genes: list = None,
-                num_genes: int = 10,
-                skip: int = 10,
-                entropy_path: str = None,
-                range: int = 2,
-                max_epsilon: float = 2**32,
-                min_num_inliers: int = 30,
-                min_num_inliers_gene: int = 5,
-                rendering: str = "Gauss",
-                rendering_factor: float = 1.0,
-                scale: float = 0.05,
-                brightness_min: float = 0,
-                brightness_max: float = 0.5,
-                ff_gauss: float = None,
-                ff_mean: float = None,
-                ff_median: float = None,
-                ff_single_spot: float = None,
-                hide_pairwise_rendering: bool = True,
-                overwrite: bool = False,
-                num_threads: int = 0,
-                ):
+def align_pairs(
+    container: str,
+    datasets: list = None,
+    genes: list = None,
+    num_genes: int = 10,
+    skip: int = 10,
+    entropy_path: str = None,
+    range: int = 2,
+    max_epsilon: float = 2**32,
+    min_num_inliers: int = 30,
+    min_num_inliers_gene: int = 5,
+    rendering: str = "Gauss",
+    rendering_factor: float = 1.0,
+    scale: float = 0.05,
+    brightness_min: float = 0,
+    brightness_max: float = 0.5,
+    ff_gauss: float = None,
+    ff_mean: float = None,
+    ff_median: float = None,
+    ff_single_spot: float = None,
+    hide_pairwise_rendering: bool = True,
+    overwrite: bool = False,
+    num_threads: int = 0,
+):
     """
     Aligns pairs of datasets.
 
@@ -545,7 +575,9 @@ def align_pairs(container: str,
     validate_positive(num_threads)
 
     if rendering not in VALID_RENDERING_MODES:
-        raise KeyError(f"The argument `rendering` must be one of {VALID_RENDERING_MODES}")
+        raise KeyError(
+            f"The argument `rendering` must be one of {VALID_RENDERING_MODES}"
+        )
 
     args = [
         f"--container {container}",
@@ -586,27 +618,29 @@ def align_pairs(container: str,
         args.append(f"--entropyPath {entropy_path}")
     if overwrite:
         args.append("--overwrite")
-    
+
     return args
 
+
 @stim_function("st-align-global")
-def align_global(container: str,
-                datasets: list = None,
-                absolute_threshold: float = 160.0,
-                lmbda: float = 1.0,
-                icp_error_fraction: float = 1.0,
-                icp_iterations: int = 100,
-                min_iterations: int = 500,
-                max_iterations: int = 3000,
-                min_iterations_icp: int = 500,
-                max_iterations_icp: int = 3000,
-                relative_threshold: float = 3.0,
-                rendering_factor: float = 1.0,
-                display_gene: str = None,
-                skip_display_results: bool = True,
-                skip_icp: bool = False,
-                ignore_quality: bool = False
-                ):
+def align_global(
+    container: str,
+    datasets: list = None,
+    absolute_threshold: float = 160.0,
+    lmbda: float = 1.0,
+    icp_error_fraction: float = 1.0,
+    icp_iterations: int = 100,
+    min_iterations: int = 500,
+    max_iterations: int = 3000,
+    min_iterations_icp: int = 500,
+    max_iterations_icp: int = 3000,
+    relative_threshold: float = 3.0,
+    rendering_factor: float = 1.0,
+    display_gene: str = None,
+    skip_display_results: bool = True,
+    skip_icp: bool = False,
+    ignore_quality: bool = False,
+):
     """
     Performs global alignment of datasets.
 
@@ -670,13 +704,13 @@ def align_global(container: str,
         args.append("--skipICP")
     if ignore_quality:
         args.append("--ignoreQuality")
-    
+
     return args
+
 
 # interactive exploration/visualization
 @stim_function("st-explorer")
-def explorer(input: str,
-             datasets: list = None):
+def explorer(input: str, datasets: list = None):
     """
     Launches the STIM explorer for interactive data exploration.
 
@@ -689,32 +723,32 @@ def explorer(input: str,
     Returns:
         list: A list of command-line arguments for the st-explorer command.
     """
-    args = [
-        f"--input {input}"
-    ]
+    args = [f"--input {input}"]
 
     if datasets:
         args.append(f"--datasets {','.join(datasets)}")
 
     return args
 
+
 @stim_function("st-render")
-def render(input: str,
-           output: str,
-           datasets: list = None,
-           genes: list = None,
-           rendering: str = "Gauss",
-           rendering_factor: float = 1.0,
-           scale: float = 0.05,
-           border: int = 20,
-           brightness_min: float = 0,
-           brightness_max: float = 0.5,
-           ff_gauss: float = None,
-           ff_mean: float = None,
-           ff_median: float = None,
-           ff_single_spot: float = None,
-           ignore_transforms: bool = False,
-           ):
+def render(
+    input: str,
+    output: str,
+    datasets: list = None,
+    genes: list = None,
+    rendering: str = "Gauss",
+    rendering_factor: float = 1.0,
+    scale: float = 0.05,
+    border: int = 20,
+    brightness_min: float = 0,
+    brightness_max: float = 0.5,
+    ff_gauss: float = None,
+    ff_mean: float = None,
+    ff_median: float = None,
+    ff_single_spot: float = None,
+    ignore_transforms: bool = False,
+):
     """
     Renders datasets and genes.
 
@@ -751,8 +785,10 @@ def render(input: str,
     validate_positive(brightness_max)
 
     if rendering not in VALID_RENDERING_MODES:
-        raise KeyError(f"The argument `rendering` must be one of {VALID_RENDERING_MODES}")
-    
+        raise KeyError(
+            f"The argument `rendering` must be one of {VALID_RENDERING_MODES}"
+        )
+
     if ff_gauss is not None:
         validate_positive(ff_gauss)
     if ff_mean is not None:
@@ -762,7 +798,6 @@ def render(input: str,
     if ff_single_spot is not None:
         validate_positive(ff_single_spot)
 
-    
     args = [
         f"--input {input}",
         f"--output {output}",
@@ -788,16 +823,19 @@ def render(input: str,
         args.append(f"--ffSingleSpot {ff_single_spot}")
     if ignore_transforms:
         args.append("--ignoreTransforms")
-    
+
     return args
 
+
 @stim_function("st-align-pairs-view")
-def align_pairs_view(container: str,
-                     datasets: list = None,
-                     gene: str = None,
-                     lmbda: float = 1.0,
-                     scale: float = 0.05,
-                     rendering_factor: float = 4.0):
+def align_pairs_view(
+    container: str,
+    datasets: list = None,
+    gene: str = None,
+    lmbda: float = 1.0,
+    scale: float = 0.05,
+    rendering_factor: float = 4.0,
+):
     """
     Views the alignment of pairs of datasets.
 
@@ -831,25 +869,27 @@ def align_pairs_view(container: str,
         args.append(f"--datasets {','.join(datasets)}")
     if gene:
         args.append(f"--gene {gene}")
-    
+
     return args
 
+
 @stim_function("st-bdv-view3d")
-def bdv_view3d(input: str,
-               genes: list,
-               datasets: list = None,
-               annotation: str = None,
-               rendering: str = "Gauss",
-               rendering_factor: float = 1.0,
-               z_spacing_factor: float = 10.0,
-               brightness_min: float = 0,
-               brightness_max: float = 0.5,
-               ff_gauss: float = None,
-               ff_mean: float = None,
-               ff_median: float = None,
-               ff_single_spot: float = None,
-               annotation_radius: float = 0.75,
-               ):
+def bdv_view3d(
+    input: str,
+    genes: list,
+    datasets: list = None,
+    annotation: str = None,
+    rendering: str = "Gauss",
+    rendering_factor: float = 1.0,
+    z_spacing_factor: float = 10.0,
+    brightness_min: float = 0,
+    brightness_max: float = 0.5,
+    ff_gauss: float = None,
+    ff_mean: float = None,
+    ff_median: float = None,
+    ff_single_spot: float = None,
+    annotation_radius: float = 0.75,
+):
     """
     Launches a 3D viewer for the datasets.
 
@@ -885,8 +925,10 @@ def bdv_view3d(input: str,
     validate_positive(brightness_max)
 
     if rendering not in VALID_RENDERING_MODES:
-        raise KeyError(f"The argument `rendering` must be one of {VALID_RENDERING_MODES}")
-    
+        raise KeyError(
+            f"The argument `rendering` must be one of {VALID_RENDERING_MODES}"
+        )
+
     if ff_gauss is not None:
         validate_positive(ff_gauss)
     if ff_mean is not None:
@@ -920,25 +962,26 @@ def bdv_view3d(input: str,
         args.append(f"--ffMedian {ff_median}")
     if ff_single_spot is not None:
         args.append(f"--ffSingleSpot {ff_single_spot}")
-    
+
     return args
 
 
 @stim_function("st-bdv-view")
-def bdv_view(input: str,
-             genes: list,
-             dataset: str,
-             annotation: str = None,
-             rendering: str = "Gauss",
-             rendering_factor: float = 1.0,
-             brightness_min: float = 0,
-             brightness_max: float = 0.5,
-             ff_gauss: float = None,
-             ff_mean: float = None,
-             ff_median: float = None,
-             ff_single_spot: float = None,
-             annotation_radius: float = 0.75
-             ):
+def bdv_view(
+    input: str,
+    genes: list,
+    dataset: str,
+    annotation: str = None,
+    rendering: str = "Gauss",
+    rendering_factor: float = 1.0,
+    brightness_min: float = 0,
+    brightness_max: float = 0.5,
+    ff_gauss: float = None,
+    ff_mean: float = None,
+    ff_median: float = None,
+    ff_single_spot: float = None,
+    annotation_radius: float = 0.75,
+):
     """
     Launches a 2D viewer for a single dataset.
 
@@ -965,7 +1008,7 @@ def bdv_view(input: str,
     Raises:
         KeyError: If an invalid rendering mode is provided.
     """
-    
+
     validate_file_exists(input)
     validate_file_exists(dataset)
     validate_positive(rendering_factor)
@@ -973,8 +1016,10 @@ def bdv_view(input: str,
     validate_positive(brightness_max)
 
     if rendering not in VALID_RENDERING_MODES:
-        raise KeyError(f"The argument `rendering` must be one of {VALID_RENDERING_MODES}")
-    
+        raise KeyError(
+            f"The argument `rendering` must be one of {VALID_RENDERING_MODES}"
+        )
+
     if ff_gauss is not None:
         validate_positive(ff_gauss)
     if ff_mean is not None:
@@ -1006,5 +1051,5 @@ def bdv_view(input: str,
         args.append(f"--ffMedian {ff_median}")
     if ff_single_spot is not None:
         args.append(f"--ffSingleSpot {ff_single_spot}")
-    
+
     return args

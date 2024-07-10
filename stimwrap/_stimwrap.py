@@ -1,15 +1,19 @@
+import logging
+import os
+
+import h5py
 import numpy as np
 import zarr
-import h5py
-import os
-import logging
+
 
 class Dataset:
     """
     Handle dataset operations for both AnnData (.h5ad) and N5 (.n5) file formats.
     """
 
-    def __init__(self, container: zarr.N5Store, dataset_name: str, mode: str = "r"):
+    def __init__(
+        self, container: zarr.N5Store, dataset_name: str, mode: str = "r"
+    ):
         """
         Initialize a Dataset object.
 
@@ -21,7 +25,7 @@ class Dataset:
         Raises:
             ValueError: If the dataset name doesn't end with '.h5ad' or '.n5'.
         """
-        
+
         self.container = container
         self.dataset_name = dataset_name
         self.file = None
@@ -30,10 +34,12 @@ class Dataset:
         self.mode = mode
         if not (self.is_h5ad or self.is_n5):
             raise ValueError("The dataset name must end with '.h5ad' or '.n5'")
-        
+
     def open(self):
         if self.is_h5ad:
-            self.file = h5py.File(os.path.join(self.container.path, self.dataset_name), self.mode)
+            self.file = h5py.File(
+                os.path.join(self.container.path, self.dataset_name), self.mode
+            )
         elif self.is_n5:
             self.file = self.container.get(self.dataset_name)
             self.file.attrs = self.file._load_n5_attrs("attributes.json")
@@ -41,7 +47,7 @@ class Dataset:
     def __enter__(self):
         self.open()
         return self
-    
+
     def __str__(self, indent=""):
         strep = ""
         if self.is_h5ad:
@@ -50,10 +56,10 @@ class Dataset:
             strep += f"{indent}stimwrap Dataset, Type: N5\n"
 
         return strep
-    
+
     def __repr__(self):
         return self.__str__()
-    
+
     def close(self):
         if self.is_h5ad and self.file:
             self.file.close()
@@ -68,22 +74,28 @@ class Dataset:
         """
         if self.is_h5ad and self.file:
             try:
-                self.remove('__DATA_TYPES__')
+                self.remove("__DATA_TYPES__")
             except KeyError as e:
-                logging.warn(f"Dataset {self.dataset_name} is clean (does not contain '__DATA_TYPES__'). Skipping...")
+                logging.warn(
+                    f"Dataset {self.dataset_name} is clean (does not contain '__DATA_TYPES__'). Skipping..."
+                )
             try:
-                if isinstance(self.file['obs'].attrs['column-order'], str):
-                    self.file['obs'].attrs['column-order'] = ''
-                if isinstance(self.file['var'].attrs['column-order'], str):
-                    self.file['var'].attrs['column-order'] = ''
+                if isinstance(self.file["obs"].attrs["column-order"], str):
+                    self.file["obs"].attrs["column-order"] = ""
+                if isinstance(self.file["var"].attrs["column-order"], str):
+                    self.file["var"].attrs["column-order"] = ""
             except KeyError as e:
-                logging.warn(f"Dataset {self.dataset_name} is clean (cannot reset 'column-order'). Skipping...")
+                logging.warn(
+                    f"Dataset {self.dataset_name} is clean (cannot reset 'column-order'). Skipping..."
+                )
         else:
-            logging.warn(f"Dataset {self.dataset_name} is not AnnData. Skipping...")
+            logging.warn(
+                f"Dataset {self.dataset_name} is not AnnData. Skipping..."
+            )
 
     def get_attribute(self, attribute: str) -> np.ndarray:
         return np.array(self.file.attrs[attribute])
-    
+
     def get(self, item: str) -> np.ndarray:
         """
         Get an item from the dataset.
@@ -96,7 +108,7 @@ class Dataset:
         """
 
         return np.array(self.file[item])
-    
+
     def set(self, item: str, value: np.ndarray):
         """
         Set (write) an item in the dataset.
@@ -115,7 +127,7 @@ class Dataset:
             raise TypeError("The argument `value` must be a numpy array")
         if item in self.file:
             raise KeyError(f"The group '{item}' exists already")
-    
+
         if self.is_h5ad and self.file:
             self.file[item] = value
         elif self.is_n5 and self.file:
@@ -123,8 +135,10 @@ class Dataset:
             _newgrpvalue = _newgrp.zeros(item, shape=value.shape)
             _newgrpvalue[...] = value
         else:
-            raise ValueError(f"'{item}' and values cannot be created/written in Dataset")
-        
+            raise ValueError(
+                f"'{item}' and values cannot be created/written in Dataset"
+            )
+
     def __getitem__(self, key: str) -> np.ndarray:
         """
         Get an item from the dataset using square bracket notation.
@@ -157,7 +171,7 @@ class Dataset:
             ValueError: If the item cannot be created or written in the Dataset.
         """
         self.set(key, value)
-    
+
     def remove(self, item: str):
         """
         Remove an item from the dataset.
@@ -170,7 +184,7 @@ class Dataset:
             del self.file[item]
         else:
             logging.error(f"Cannot remove '{item}'")
-    
+
     def get_attribute_or_item(self, item: str) -> np.ndarray:
         """
         Get an attribute or item from the dataset.
@@ -191,72 +205,113 @@ class Dataset:
             return self.get(item)
         else:
             raise KeyError(f"Could not find '{item}' at attributes or items")
-        
-    def get_transform(self, transformation: str = 'model_sift'):
-        """Get the transformation matrix that is used to transform the original 
+
+    def get_transform(self, transformation: str = "model_sift"):
+        """Get the transformation matrix that is used to transform the original
         locations to the aligned locations.
 
         Args:
-            transformation (str, optional): the transformation used. Can be 
+            transformation (str, optional): the transformation used. Can be
                 'model_sift' (default), 'model_icp'.
 
         Returns:
             numpy array: the transform matrix.
         """
         if self.is_h5ad and self.file:
-            transformation = f"uns/{transformation}" if not transformation.startswith("uns/") else transformation
+            transformation = (
+                f"uns/{transformation}"
+                if not transformation.startswith("uns/")
+                else transformation
+            )
             transform_matrix = self.get(transformation).reshape(2, 3)
         elif self.is_n5:
             transform_matrix = self.get_attribute(transformation)
         else:
-            raise FileNotFoundError("The dataset is not loaded or does not exist")
-    
-        transform_matrix = np.concatenate((transform_matrix,
-            np.array([0, 0, 1]).reshape(1, 3)))
+            raise FileNotFoundError(
+                "The dataset is not loaded or does not exist"
+            )
+
+        transform_matrix = np.concatenate(
+            (transform_matrix, np.array([0, 0, 1]).reshape(1, 3))
+        )
         return transform_matrix
-    
-    def apply_save_transform(self, transformation: str = 'model_sift', locations: str = 'locations', destination: str = 'spatial_transform_sift', z_coord: float = None):
-        """Get the transformation matrix that is used to transform the original 
+
+    def apply_save_transform(
+        self,
+        transformation: str = "model_sift",
+        locations: str = "locations",
+        destination: str = "spatial_transform_sift",
+        z_coord: float = None,
+    ):
+        """Get the transformation matrix that is used to transform the original
         locations to the aligned locations.
 
         If z_coord is provided, a 3D location vector is created per section (with the
         section Z-axis coordinate)
 
         Args:
-            transformation (str, optional): the transformation used. Can be 
+            transformation (str, optional): the transformation used. Can be
                 'model_sift' (default), 'model_icp'.
             locations (str, optional): the path where location data is found
             destination (str, optional): path where transformed coordinates
                 will be stored (for AnnData, it is under 'obsm/')
             z_coord (float, optional): the Z-axis value for the section
         """
-        locations = f"obsm/{locations}" if not locations.startswith("obsm/") and self.is_h5ad else locations
-        aligned_locations = self.get_aligned_locations(transformation, locations)
-        
+        locations = (
+            f"obsm/{locations}"
+            if not locations.startswith("obsm/") and self.is_h5ad
+            else locations
+        )
+        aligned_locations = self.get_aligned_locations(
+            transformation, locations
+        )
+
         # append the provided z-axis to the transformed coordinates
         if z_coord is not None:
-            transpose = True if aligned_locations.shape[0] > aligned_locations.shape[1] else False
+            transpose = (
+                True
+                if aligned_locations.shape[0] > aligned_locations.shape[1]
+                else False
+            )
 
             if transpose:
-                aligned_locations = np.concatenate((aligned_locations,
-                (np.ones(aligned_locations.shape[0])*z_coord).reshape(-1, 1)), axis=1)
+                aligned_locations = np.concatenate(
+                    (
+                        aligned_locations,
+                        (np.ones(aligned_locations.shape[0]) * z_coord).reshape(
+                            -1, 1
+                        ),
+                    ),
+                    axis=1,
+                )
             else:
-                aligned_locations = np.concatenate((aligned_locations,
-                (np.ones(aligned_locations.shape[1])*z_coord).reshape(1, -1)), axis=0)
-    
+                aligned_locations = np.concatenate(
+                    (
+                        aligned_locations,
+                        (np.ones(aligned_locations.shape[1]) * z_coord).reshape(
+                            1, -1
+                        ),
+                    ),
+                    axis=0,
+                )
+
         if self.is_h5ad and self.file and not destination.startswith("obsm/"):
             destination = f"obsm/{destination}"
         else:
-            raise FileNotFoundError("The dataset is not loaded or does not exist")
-        
+            raise FileNotFoundError(
+                "The dataset is not loaded or does not exist"
+            )
+
         self.set(destination, aligned_locations)
-    
-    def get_aligned_locations(self, transformation: str = 'model_sift', locations: str = 'locations'):
+
+    def get_aligned_locations(
+        self, transformation: str = "model_sift", locations: str = "locations"
+    ):
         """Get the aligned locations of a dataset after having aligned it to the
         rest datasets in the container.
 
         Args:.
-            transformation (str, optional): the transformation used. Can be 
+            transformation (str, optional): the transformation used. Can be
                 'model_sift' (default), 'model_icp'.
             locations (str, optional): the path where location data is found
 
@@ -272,19 +327,20 @@ class Dataset:
         if locations.shape[1] < locations.shape[0]:
             locations = locations.T
             transpose = True
-        
+
         # we proceed normally
         num_locations = locations.shape[1]
-        locations = np.concatenate((locations, 
-            np.ones(num_locations).reshape(1, num_locations)))
+        locations = np.concatenate(
+            (locations, np.ones(num_locations).reshape(1, num_locations))
+        )
         transform_matrix = self.get_transform(transformation=transformation)
         aligned_locations = np.dot(transform_matrix, locations)[:2, :]
-        
+
         if transpose:
             aligned_locations = aligned_locations.T
 
         return aligned_locations
-    
+
     def get_gene_expression(self, gene: str = None):
         """Get gene expression from a specific dataset. It returns either a vector
         for a specific gene or the whole gene expression matrix if no gene is provided.
@@ -298,31 +354,42 @@ class Dataset:
         """
         if self.is_h5ad and self.file:
             if gene is not None:
-                gene_idx = int(np.where(np.array(self.file['var/_index']) == gene)[0])
+                gene_idx = int(
+                    np.where(np.array(self.file["var/_index"]) == gene)[0]
+                )
             else:
                 gene_idx = None
 
-            _X = self.file['X']
+            _X = self.file["X"]
             _X_attrs = _X.attrs
-            encoding_type = _X_attrs['encoding-type']
-    
+            encoding_type = _X_attrs["encoding-type"]
+
             if encoding_type == "array":
-                return self.file['X'][:, gene]
+                return self.file["X"][:, gene]
             elif encoding_type == "csr_matrix":
-                _shape = _X_attrs['shape']
-                raise NotImplementedError("stimwrap cannot read expression from AnnData 'csr_matrix' yet.") 
+                _shape = _X_attrs["shape"]
+                raise NotImplementedError(
+                    "stimwrap cannot read expression from AnnData 'csr_matrix' yet."
+                )
             elif encoding_type == "csc_matrix":
-                _shape = _X_attrs['shape']
-                raise NotImplementedError("stimwrap cannot read expression from AnnData 'csc_matrix' yet.") 
+                _shape = _X_attrs["shape"]
+                raise NotImplementedError(
+                    "stimwrap cannot read expression from AnnData 'csc_matrix' yet."
+                )
             else:
-                raise ValueError("The gene expression stored in 'X' does not have compatible encoding")
+                raise ValueError(
+                    "The gene expression stored in 'X' does not have compatible encoding"
+                )
         elif self.is_n5:
             if gene is not None:
-                gene_idx = int(np.where(np.array(self.attrs['geneList']) == gene)[0])
-                gene_expression = self.get('expression')[:, gene_idx]
+                gene_idx = int(
+                    np.where(np.array(self.attrs["geneList"]) == gene)[0]
+                )
+                gene_expression = self.get("expression")[:, gene_idx]
                 return gene_expression
             else:
-                return np.round(np.array(self.get('expression')), 4)
+                return np.round(np.array(self.get("expression")), 4)
+
 
 class Container:
     def __init__(self, filename: str):
@@ -334,9 +401,9 @@ class Container:
         self.attrs = self.container.attrs
 
     def __str__(self):
-        datasets = self.attrs['datasets']
-        num_datasets = self.attrs['num_datasets']
-        
+        datasets = self.attrs["datasets"]
+        num_datasets = self.attrs["num_datasets"]
+
         strep = f"stimwrap Container: {self.path}\n"
         strep += f"Number of datasets: {num_datasets}\n"
         strep += "Datasets:\n"
@@ -347,7 +414,7 @@ class Container:
                 strep += ds.__str__(indent="    ")
 
         return strep
-    
+
     def __repr__(self):
         return self.__str__()
 
@@ -356,8 +423,8 @@ class Container:
         Removes the housekeeping group `__DATA_TYPES__` created
         by JHDF5, which is kept if STIM is closed prematurely.
         """
-        for dataset_name in self.container.attrs['datasets']:
-            with self.get_dataset(dataset_name, mode = "r+") as dataset:
+        for dataset_name in self.container.attrs["datasets"]:
+            with self.get_dataset(dataset_name, mode="r+") as dataset:
                 dataset.cleanup_dataset()
 
     def get_container(filename: str):
@@ -370,15 +437,13 @@ class Container:
             zarr.N5Store File: the container in zarr N5Store format.
         """
 
-
     def get_dataset_names(self):
         """Get all dataset names that are inside a container.
 
         Returns:
             list of strings: List of dataset names.
         """
-        return self.container.attrs['datasets']
-
+        return self.container.attrs["datasets"]
 
     def get_dataset(self, dataset_name: str, mode: str = "r") -> Dataset:
         """Get a specific dataset from the container.
