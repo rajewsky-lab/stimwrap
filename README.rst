@@ -15,6 +15,14 @@ that are created by STIM.
 ``stimwrap`` is created and maintained by `Nikos Karaiskos <mailto:nikolaos.karaiskos@mdc-berlin.de>`_
 and `Daniel León-Periñán <mailto:daniel.leonperinan@mdc-berlin.de>`_.
 
+Quick start
+-----------
+We provide an example notebook under ``notebooks/openst_example.ipynb``, and also
+a `Google Colab notebook <https://colab.research.google.com/drive/10j-pb0ZIC1OFIhRi1g5hkIeRTQQqEvL5?usp=sharing>`_
+
+These will walk you through downloading `Open-ST data <https://rajewsky-lab.github.io/openst/latest/>`_, running
+``STIM`` in a Python notebook (via ``stimwrap`` bindings), and seamlessly running some downstream analyses.
+
 Installation
 ------------
 To install the ``stimwrap`` try::
