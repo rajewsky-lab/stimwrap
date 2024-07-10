@@ -268,7 +268,6 @@ def resave(
     Returns:
         list: A list of command-line arguments for the ``st-resave`` command.
     """
-    validate_file_exists(input)
 
     args = [
         f"--container {container}",
