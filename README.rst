@@ -23,6 +23,10 @@ a `Google Colab notebook <https://colab.research.google.com/drive/10j-pb0ZIC1OFI
 These will walk you through downloading `Open-ST data <https://rajewsky-lab.github.io/openst/latest/>`_, running
 ``STIM`` in a Python notebook (via ``stimwrap`` bindings), and seamlessly running some downstream analyses.
 
+We provide another notebook under ``notebooks/visium_example.ipynb``, and also 
+a `Google Colab notebook <https://colab.research.google.com/drive/1dea0fbL1i65vYy3GvSc8RXX_mBGFia_O?usp=sharing>`_ 
+showcasing the 10x Visium adult mouse brain dataset showcased in all our tutorials.
+
 Installation
 ------------
 To install the ``stimwrap`` try:
