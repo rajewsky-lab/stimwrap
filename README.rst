@@ -26,14 +26,17 @@ These will walk you through downloading `Open-ST data <https://rajewsky-lab.gith
 Installation
 ------------
 To install the ``stimwrap`` try:
+
 .. code-block:: bash
    pip install stimwrap
 
 or if you do not have sudo rights:
+
 .. code-block:: bash
    pip install --user stimwrap
 
 Check if the library is successfully installed:
+
 .. code-block:: bash
    python -c import stimwrap as sw
 
@@ -44,29 +47,35 @@ Usage
 -----
 The following assumes that the file ``container.n5`` contains the datasets and their
 attributes as created by ``STIM``:
+
 .. code-block:: python
    import stimwrap as sw
    pucks = sw.Container('/path/to/container.n5')
 
 Print the names of the datasets:
+
 .. code-block:: python
    print(pucks.get_dataset_names())
 
 Focus on a specific puck and extract the relevant information:
+
 .. code-block:: python
    puck_name = pucks.get_dataset_names()[0]
    puck = pucks.get_dataset(puck_name)
     
 Get the puck locations either directly from the puck:
+
 .. code-block:: python
    locations = puck['locations']
 
 or fetch them from the container:
+
 .. code-block:: python
    locations = pucks.get_dataset(puck_name)['locations']
 
 The examples above assume that the dataset is `N5`-backed. For `AnnData`-backed
 datasets, the key for the puck locations might be:
+
 .. code-block:: python
    locations = pucks.get_dataset(puck_name)['spatial']
 
@@ -76,10 +85,12 @@ we recommend using the official `AnnData` package for handling these files.
 Fetch gene expression
 ~~~~~~~~~~~~~~~~~~~~~
 It is possible to get the expression vector of a single gene:
+
 .. code-block:: python
    hpca_vec = pucks.get_dataset(puck_name).get_gene_expression(gene='Hpca')
 
 or the whole gene expression matrix:
+
 .. code-block:: python
    dge = pucks.get_dataset(puck_name).get_gene_expression()
 
@@ -87,6 +98,7 @@ Fetch dataset attributes
 ~~~~~~~~~~~~~~~~~~~~~~~~
 ``STIM`` stores the dataset attributes in the ``n5`` container. These can 
 be directly accessed with ``stimwrap``:
+
 .. code-block:: python
    puck.get_attribute(attribute='geneList')
 
@@ -96,6 +108,7 @@ Fetch aligned locations
 ~~~~~~~~~~~~~~~~~~~~~~~
 In the case where multiple consecutive sections are obtained and aligned with
 ``STIM``, the aligned locations can be obtained with:
+
 .. code-block:: python
    aligned_locations = puck.get_aligned_locations(transformation='model_sift')
 
@@ -103,5 +116,6 @@ Store aligned locations
 ~~~~~~~~~~~~~~~~~~~~~~~
 The aligned locations can be stored in the N5 or AnnData-backed object, for
 seamless downstream analysis:
+
 .. code-block:: python
    aligned_locations = puck.apply_save_transform(transformation='model_sift')
