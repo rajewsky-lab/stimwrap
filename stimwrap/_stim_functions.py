@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 import inspect
 from functools import wraps
@@ -137,7 +138,7 @@ def stim_function(program_name):
             command = [os.path.join(BIN_PATH, program_name)] + args
             final_command = ' '.join(command)
             env = os.environ.copy()
-            subprocess.Popen(final_command, 
+            process = subprocess.Popen(final_command, 
                              stdout=subprocess.PIPE,
                              stderr=subprocess.STDOUT,
                              shell=True,
@@ -145,6 +146,14 @@ def stim_function(program_name):
                              bufsize=1,
                              universal_newlines=True,
                              env=env)
+            for line in iter(process.stdout.readline, ''):
+                print(line, end='')
+                sys.stdout.flush()
+            
+            return_code = process.wait()
+            if return_code != 0:
+                raise subprocess.CalledProcessError(return_code, command)
+    
         return wrapper
     return decorator
 
