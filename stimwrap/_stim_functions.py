@@ -64,9 +64,10 @@ def stim_version():
     Raises:
         subprocess.CalledProcessError: If the command fails to execute.
     """
+    env = os.environ.copy()
     command = [os.path.join(BIN_PATH, 'st-help')] + ['--version']
     final_command = ' '.join(command)
-    version = subprocess.run(final_command, shell=True, check=True, capture_output=True)
+    version = subprocess.run(final_command, shell=True, check=True, capture_output=True, env=env)
     return version.stdout.strip().decode()
 
 # communicating with the Java bins
@@ -135,7 +136,8 @@ def stim_function(program_name):
             args = func(*args, **kwargs)
             command = [os.path.join(BIN_PATH, program_name)] + args
             final_command = ' '.join(command)
-            subprocess.run(final_command, shell=True, check=True)
+            env = os.environ.copy()
+            subprocess.run(final_command, shell=True, check=True, env=env)
         return wrapper
     return decorator
 
