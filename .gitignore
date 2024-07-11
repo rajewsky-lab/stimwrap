@@ -6,6 +6,14 @@ __pycache__/
 # C extensions
 *.so
 
+# Ignore notebook input/output data
+*notebooks/*.h5ad
+*notebooks/*.h5ad*
+*notebooks/*/*.json
+*notebooks/*.txt
+*notebooks/*.n5
+*notebooks/test*
+
 # Distribution / packaging
 .Python
 build/
