@@ -399,7 +399,7 @@ def align_pairs_add(
 # alignment
 @stim_function("st-align-interactive")
 def align_interactive(
-    input: str,
+    container: str,
     section_a: str,
     section_b: str,
     num_genes: int = 10,
@@ -466,7 +466,7 @@ def align_interactive(
         validate_positive(ff_single_spot)
 
     args = [
-        f"--input {input}",
+        f"--container {container}",
         f"--dataset1 {section_a}",
         f"--dataset2 {section_b}",
         f"--numGenes {num_genes}",
