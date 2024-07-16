@@ -419,7 +419,7 @@ def align_interactive(
     This function prepares the arguments for the ``st-align-interactive`` command and executes it.
 
     Args:
-        input (str): Path to the input file.
+        container (str): Path to the input file.
         section_a (str): Path to the first section file.
         section_b (str): Path to the second section file.
         num_genes (int, optional): Number of genes to use for alignment. Default is 10.
