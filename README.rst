@@ -29,7 +29,8 @@ showcasing the 10x Visium adult mouse brain dataset showcased in all our tutoria
 
 Installation
 ------------
-To install the ``stimwrap`` try:
+We recommend installing ``stimwrwap`` in the same ``conda`` environment with
+STIM. To install ``stimwrap`` try:
 
 .. code-block:: bash
 
@@ -46,9 +47,6 @@ Check if the library is successfully installed:
 .. code-block:: bash
 
    python -c import stimwrap as sw
-
-If installation fails due to conflicting dependencies, create a dedicated environment
-with ``python>=3.9`` and try again to install ``stimwrap`` as above.
 
 Usage
 -----
