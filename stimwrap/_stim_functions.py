@@ -6,7 +6,7 @@ import sys
 from functools import wraps
 
 VALID_RENDERING_MODES: list = ["Gauss"]
-VALID_STIM_VERSION: list = ["0.3.0"]
+VALID_STIM_VERSION: list = ["0.3.0", "0.3.1"]
 BIN_PATH: str = ""
 
 
